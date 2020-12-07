@@ -1,15 +1,21 @@
-
 const { Telegraf, session, Stage, Extra } = require('telegraf')
 const Markup = require('telegraf/markup')
 const SceneGenerator = require('./scenes')
 const curScene = new SceneGenerator()
-const lastName = curScene.GenLastName();
+const lastName = curScene.GenLastName()
+const name = curScene.GenName()
+const middleName = curScene.GenMiddleName()
+const phone = curScene.GenPhone()
+const email = curScene.GenEmail()
+const birthDate = curScene.GenBirthDate()
+const creditSum = curScene.GenCreditSum()
+const loanPeriod = curScene.GenLoanPeriod()
 
 const token = '1483488015:AAE9HfUzITxtbLIN4VrnfRjJe06J21rq838'
 
 const bot = new Telegraf(token)
 
-const stage = new Stage([lastName])
+const stage = new Stage([lastName, name, middleName, phone, email, birthDate, creditSum, loanPeriod])
 bot.use(session())
 bot.use(stage.middleware())
 
