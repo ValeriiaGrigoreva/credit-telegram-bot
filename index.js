@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { Telegraf, session, Stage, Extra } = require('telegraf')
 const Markup = require('telegraf/markup')
 const SceneGenerator = require('./scenes')
@@ -11,9 +12,7 @@ const birthDate = curScene.GenBirthDate()
 const creditSum = curScene.GenCreditSum()
 const loanPeriod = curScene.GenLoanPeriod()
 
-const token = '1483488015:AAE9HfUzITxtbLIN4VrnfRjJe06J21rq838'
-
-const bot = new Telegraf(token)
+const bot = new Telegraf(process.env.TOKEN)
 
 const stage = new Stage([lastName, name, middleName, phone, email, birthDate, creditSum, loanPeriod])
 bot.use(session())
