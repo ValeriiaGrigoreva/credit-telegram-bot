@@ -99,7 +99,16 @@ class SceneGenerator {
                 await ctx.reply('К сожалению, это не похоже на дату рождения')
                 await ctx.scene.reenter()
             } else {
-                await ctx.scene.enter('phone')
+                let answerArr = answer.split('.');
+                if (validateBirthDate(answerArr) == 'wrong date') {
+                    await ctx.reply('К сожалению, это не похоже на дату рождения')
+                    await ctx.scene.reenter()
+                } else if (validateBirthDate(answerArr) == 'wrong age') {
+                    await ctx.reply('К сожалению, в возрасте меньше 18 лет мы не можем выдать вам кредит')
+                    await ctx.scene.leave()
+                } else {
+                    await ctx.scene.enter('phone')
+                }
             }
         })
 
@@ -110,7 +119,11 @@ class SceneGenerator {
         const phone = new Scene('phone');
 
         phone.enter((ctx) => {
-            ctx.reply('Введите ваш телефон в формате +7XXXXXXXXXX')
+            ctx.reply('Введите ваш телефон в формате +7XXXXXXXXXX или выберите опцию "Поделиться контактом" на клавиатуре', Markup.keyboard([
+                [{text: 'Поделиться контактом', request_contact: true}] 
+              ])
+                .resize()
+                .extra())
         })
 
         phone.phone((ctx) => ctx.scene.enter('email'));
@@ -118,6 +131,17 @@ class SceneGenerator {
             await ctx.reply('К сожалению, это не похоже на телефон')
             await ctx.scene.reenter()
         });
+
+        phone.on('contact', (ctx) => {
+            ctx.reply(`Вы бы хотели оставить данный номер телефона в вашей заявке +${ctx.message.contact.phone_number}?`, Markup.keyboard([
+                ['Да', 'Нет'], 
+              ])
+                .resize()
+                .extra())
+        })
+
+        phone.hears('Да', (ctx) => ctx.scene.enter('email') )
+        phone.hears('Нет', (ctx) => ctx.scene.reenter() )
 
         return phone
     }
@@ -176,8 +200,7 @@ class SceneGenerator {
                 await ctx.reply('К сожалению, это не похоже на срок кредитования')
                 await ctx.scene.reenter()
             } else { 
-                ctx.reply('kool');
-                //await ctx.scene.enter('middleName')
+                await ctx.scene.enter('lastMessage')
             }
         })
 
@@ -188,6 +211,41 @@ class SceneGenerator {
 
         return loanPeriod
     }
+
+    GenLastMessage() {
+        const lastMessage = new Scene('lastMessage')
+        lastMessage.enter((ctx) => {
+            ctx.reply('Мы получили вашу заявку и перезвоним в ближайшее время')
+            ctx.scene.leave()
+        })
+        return lastMessage
+    }
 }
 
 module.exports = SceneGenerator
+
+function validateBirthDate(dateArray) {
+    let birthDay = dateArray[0][0] == 0 ? dateArray[0][1] : dateArray[0];
+    let birthMonth = dateArray[1][0] == 0 ? dateArray[1][1] : dateArray[1];
+    let birthYear = dateArray[2];
+    let nowYear = new Date().getFullYear();
+    let nowMonth = new Date().getMonth() + 1;
+    let nowDay = new Date().getDate();
+    let age;
+
+    if (birthDay < 1 || birthDay > 31 || birthMonth < 1 || birthMonth > 12 || birthYear > nowYear || birthYear < 1910) {
+        return 'wrong date'
+    } else if (birthMonth < nowMonth) {
+        age = nowYear - birthYear;
+    } else if (birthMonth > nowMonth) {
+        age = nowYear - birthYear - 1;
+    } else {
+        if (birthDay > nowDay) {
+            age = nowYear - birthYear - 1;
+        } else {
+            age = nowYear - birthYear;
+        }
+    }
+
+    return age >= 18 ? 'right age' : 'wrong age'
+}

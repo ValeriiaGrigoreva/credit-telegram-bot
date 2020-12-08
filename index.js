@@ -1,5 +1,6 @@
 require('dotenv').config()
 const { Telegraf, session, Stage, Extra } = require('telegraf')
+const { contactRequestButton } = require('telegraf/markup')
 const Markup = require('telegraf/markup')
 const SceneGenerator = require('./scenes')
 const curScene = new SceneGenerator()
@@ -11,15 +12,16 @@ const email = curScene.GenEmail()
 const birthDate = curScene.GenBirthDate()
 const creditSum = curScene.GenCreditSum()
 const loanPeriod = curScene.GenLoanPeriod()
+const lastMessage = curScene.GenLastMessage()
 
 const bot = new Telegraf(process.env.TOKEN)
 
-const stage = new Stage([lastName, name, middleName, phone, email, birthDate, creditSum, loanPeriod])
+const stage = new Stage([lastName, name, middleName, phone, email, birthDate, creditSum, loanPeriod, lastMessage])
 bot.use(session())
 bot.use(stage.middleware())
 
 bot.start((ctx) => ctx.reply('Здравствуйте! Данный бот поможет вам оформить заявку на потребительский кредит. Для продолжения подтвердтите согласие на обработку персональных данных', Markup.keyboard([
-        ['Согласен(а)', 'Не согласен(а)'],  
+        ['Согласен(а)', 'Не согласен(а)'], 
       ])
         .resize()
         .extra()
