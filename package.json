@@ -1,6 +1,7 @@
 {
   "name": "credit-telegram-bot",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,9 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "node-telegram-bot-api": "0.50.0",
     "nodemon": "^2.0.6",
-    "telegraf": "^3.38.0",
-    "telegram-keyboard": "^2.1.7"
+    "telegraf": "^3.38.0"
   }
 }

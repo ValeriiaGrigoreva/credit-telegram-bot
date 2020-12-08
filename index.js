@@ -1,6 +1,5 @@
 require('dotenv').config()
 const { Telegraf, session, Stage, Extra } = require('telegraf')
-const { contactRequestButton } = require('telegraf/markup')
 const Markup = require('telegraf/markup')
 const SceneGenerator = require('./scenes')
 const curScene = new SceneGenerator()
@@ -20,7 +19,7 @@ const stage = new Stage([lastName, name, middleName, phone, email, birthDate, cr
 bot.use(session())
 bot.use(stage.middleware())
 
-bot.start((ctx) => ctx.reply('Здравствуйте! Данный бот поможет вам оформить заявку на потребительский кредит. Для продолжения подтвердтите согласие на обработку персональных данных', Markup.keyboard([
+bot.start((ctx) => ctx.reply('Здравствуйте!\n\nДанный бот поможет вам оформить заявку на потребительский кредит.\n\nДля продолжения подтвердтите, пожалуйста, согласие на обработку персональных данных.', Markup.keyboard([
         ['Согласен(а)', 'Не согласен(а)'], 
       ])
         .resize()
@@ -29,6 +28,6 @@ bot.start((ctx) => ctx.reply('Здравствуйте! Данный бот по
     
 )
 bot.hears('Согласен(а)', (ctx) => ctx.scene.enter('lastName'))
-bot.hears('Не согласен(а)', (ctx) => ctx.reply('К сожалению, без согласия на обработку персональных данных мы не сможем принять вашу заявку. Если вы все таки хотите отправить заявку нажмите /start или выберите опцию Согласен(а)'))
+bot.hears('Не согласен(а)', (ctx) => ctx.reply('К сожалению, без согласия на обработку персональных данных мы не сможем принять вашу заявку.\n\nЕсли вы все таки хотите отправить заявку нажмите /start или выберите опцию "Согласен(а)".'))
 
 bot.launch()
