@@ -1,3 +1,6 @@
+/*функция, которая проверяет введенную дату рождения по следующим параметрам: дата и месяц 
+сущетсвуют, год не больше текущего, и не меньше 1910. Также проверяется 
+больше ли 18 лет, если нет, то в выдаче кредита будет отказано*/
 function validateBirthDate(dateArray) {
     let birthDay = dateArray[0][0] == 0 ? dateArray[0][1] : dateArray[0];
     let birthMonth = dateArray[1][0] == 0 ? dateArray[1][1] : dateArray[1];
